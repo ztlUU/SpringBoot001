@@ -8,6 +8,8 @@ public class Demo {
 
     public static void main(String[] args) {
 
+
+
         //单向链表反向打印
         Node head = new Node(1);
         Node temp = head;

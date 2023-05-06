@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>添加用户</title>
+</head>
+<body>
+  姓名:<input type="text" id="username"><br/>
+  <button onclick="add()">添加</button>
+
+  <script src="/js/jquery-1.12.4.min.js"></script>
+<script>
+  function add(){
+    var username = document.getElementById("username").value
+    if(username==null || username.length<1){
+      return
+    }
+    $.ajax({
+      method:"post",
+      url:"/user",
+      data:{
+        "userName":username
+      },
+      success:function (msg){
+        window.location.href="/list.html"
+      }
+    })
+  }
+</script>
+</body>
+</html>

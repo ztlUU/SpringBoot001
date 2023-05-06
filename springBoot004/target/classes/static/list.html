@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户列表</title>
+</head>
+<body onload="selectList()">
+<button onclick="add()">添加用户</button>
+<table id="selectList">
+
+</table>
+总条数：<span id="sp1"></span> 总页数：<span id="sp2"></span>当前页：<span id="sp3"></span>
+<script src="/js/jquery-1.12.4.min.js"></script>
+<button onclick="lastPage()">上一页</button>
+<button onclick="nextPage()">下一页</button>
+<script>
+    function selectList() {
+        $.ajax({
+            method: "get",
+            url: "/user",
+            success: function (msg) {
+                var userData = msg.data.records
+                var str = "<tr><td>id</td> <td>用户名</td> <td>操作</td></tr>"
+                for (var i = 0; i < userData.length; i++) {
+                    str += "<tr><td>" + userData[i].id + "</td><td>" + userData[i].userName + "</td><td>" +
+                        "<button onclick='del("+userData[i].id+")'>删除</button>" +
+                        "<button onclick='update("+userData[i].id+")'>修改</button>"+
+                        "</td></tr>"
+                }
+                $("#selectList").empty()
+                $("#selectList").append(str)
+
+                document.getElementById("sp1").innerText=msg.data.total
+                document.getElementById("sp2").innerText=msg.data.pages
+                document.getElementById("sp3").innerText=msg.data.current
+
+            }
+        })
+    }
+
+    function del(id){
+        var flag = confirm("是否删除")
+        if(!flag){
+            alert("取消删除")
+          return
+        }
+        $.ajax({
+            method: "delete",
+            url: "/user/"+id,
+            success:function (mag){
+                selectList()
+                alert(删除成功)
+            }
+        })
+    }
+
+    function add(){
+        window.location.href="/add.html"
+    }
+
+    function update(id){
+        $.ajax({
+            method:"get",
+            url:"/user/"+id,
+            success:function (msg){
+                var newName = prompt("请输入新的用户名",msg.data.userName)
+                $.ajax({
+                    method:"put",
+                    url:"/user",
+                    data:{
+                        "id":id,
+                        "userName":newName
+                    },
+                    success:function (msg){
+                        selectList()
+                        alert("修改成功")
+                    }
+                })
+            }
+        })
+
+    }
+
+    function lastPage(){
+        var currentPage = document.getElementById("sp3").innerText
+        currentPage = parseInt(currentPage)
+        if(currentPage>1){
+            currentPage -=1
+        }
+        $.ajax({
+            method: "get",
+            url: "/user",
+            data:{
+                "current":currentPage
+            },
+            success:function (msg){
+                var userData = msg.data.records
+                var str = "<tr><td>id</td> <td>用户名</td> <td>操作</td></tr>"
+                for (var i = 0; i < userData.length; i++) {
+                    str += "<tr><td>" + userData[i].id + "</td><td>" + userData[i].userName + "</td><td>" +
+                        "<button onclick='del("+userData[i].id+")'>删除</button>" +
+                        "<button onclick='update("+userData[i].id+")'>修改</button>"+
+                        "</td></tr>"
+                }
+                $("#selectList").empty()
+                $("#selectList").append(str)
+
+                document.getElementById("sp1").innerText=msg.data.total
+                document.getElementById("sp2").innerText=msg.data.pages
+                document.getElementById("sp3").innerText=msg.data.current
+            }
+
+        })
+    }
+
+    function nextPage(){
+        var currentPage = document.getElementById("sp3").innerText
+        var maxPage = document.getElementById("sp2").innerText
+        maxPage = parseInt(maxPage)
+        currentPage = parseInt(currentPage)
+        if(currentPage<maxPage){
+            currentPage +=1
+        }
+        $.ajax({
+            method: "get",
+            url: "/user",
+            data:{
+                "current":currentPage
+            },
+            success:function (msg){
+                var userData = msg.data.records
+                var str = "<tr><td>id</td> <td>用户名</td> <td>操作</td></tr>"
+                for (var i = 0; i < userData.length; i++) {
+                    str += "<tr><td>" + userData[i].id + "</td><td>" + userData[i].userName + "</td><td>" +
+                        "<button onclick='del("+userData[i].id+")'>删除</button>" +
+                        "<button onclick='update("+userData[i].id+")'>修改</button>"+
+                        "</td></tr>"
+                }
+                $("#selectList").empty()
+                $("#selectList").append(str)
+
+                document.getElementById("sp1").innerText=msg.data.total
+                document.getElementById("sp2").innerText=msg.data.pages
+                document.getElementById("sp3").innerText=msg.data.current
+            }
+
+        })
+    }
+</script>
+</body>
+</html>

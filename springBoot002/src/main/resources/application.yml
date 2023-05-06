@@ -1,0 +1,11 @@
+server:
+  port: 80
+
+
+dept:
+  name: 张三
+  age: 18
+  subject:
+    - java
+    - python
+    - mysql
